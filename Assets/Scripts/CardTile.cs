@@ -10,8 +10,6 @@ public class CardTile : MonoBehaviour
     [SerializeField] private Sprite cardBg;
     public bool isRevealed = false;
     public bool isExposed = false;
-    public AnimationCurve flipCurve;
-    public AnimationCurve scaleTo0Curve;
 
     private void OnEnable()
     {
@@ -33,9 +31,8 @@ public class CardTile : MonoBehaviour
             return;
         }
         StartCoroutine(FlipCard());
-      
         isRevealed = true;
-       
+        GameEventsManager.cardRevalEvent.Invoke(this);
 
     }
     public void ResetCard()
@@ -62,7 +59,7 @@ public class CardTile : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            transform.localScale = Vector3.Lerp(startScale, endScale, scaleTo0Curve.Evaluate(elapsedTime / duration));
+            transform.localScale = Vector3.Lerp(startScale, endScale, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -99,7 +96,7 @@ public class CardTile : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            transform.rotation = Quaternion.Lerp(startRotation, endRotation, flipCurve.Evaluate(elapsedTime / duration));
+            transform.rotation = Quaternion.Lerp(startRotation, endRotation, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
             if (elapsedTime >= duration / 2)
             {
