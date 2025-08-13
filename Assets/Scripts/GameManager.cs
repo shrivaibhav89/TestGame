@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator CheckMatchCards(CardMatchmaker cardMatchmaker)
     {
-       
+        
         yield return new WaitForSeconds(1);
         if (cardMatchmaker.firstCard.cardType == cardMatchmaker.secondCard.cardType)
         {
@@ -119,12 +119,67 @@ public class GameManager : MonoBehaviour
 
         score += matchScore * streakMultiplier;
         streakMultiplier++;
+        SaveGame();
     }
 
-   
+    public void SaveGame()
+    {
+        PlayerPrefs.SetInt("Score", score);
+        PlayerPrefs.SetInt("Turns", turns);
+        SaveGridData();
+    }
+    public void SaveGridData()
+    {
+        GridData gridData = new GridData();
+        gridData.gridWidth = gridGenrator.gridWidth;
+        gridData.gridHeight = gridGenrator.gridHeight;
+        for (int i = 0; i < gridGenrator.cardGrid.transform.childCount; i++)
+        {
+            CardTile tile = gridGenrator.cardGrid.transform.GetChild(i).GetComponent<CardTile>();
+            CellData cellData = new CellData
+            {
+                index = i,
+                isExposed = tile.isExposed,
+                cardType = tile.cardType.cardId
+            };
+            gridData.cells.Add(cellData);
+        }
+
+        string json = JsonUtility.ToJson(gridData, true);
+        File.WriteAllText(Application.persistentDataPath + "/gridData.json", json);
+    }
 
     // Method to load grid data
-   
+    public async void LoadGridData()
+    {
+        gameState = GameState.GameOver;
+        string path = Application.persistentDataPath + "/gridData.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            GridData gridData = JsonUtility.FromJson<GridData>(json);
+            // gridGenrator.gridWidth = gridData.gridWidth;
+            // gridGenrator.gridHeight = gridData.gridHeight;
+            gridGenrator.CreateGridForLoadgame(gridData.gridWidth, gridData.gridHeight);
+            await Task.Delay(10); // Delay to allow grid to be generated before loading data
+
+            for (int i = 0; i < gridData.cells.Count; i++)
+            {
+                CellData cellData = gridData.cells[i];
+                CardTile tile = gridGenrator.tiles[cellData.index];
+                tile.isExposed = cellData.isExposed;
+                tile.cardType = Array.Find(gridGenrator.cardTypes, ct => ct.cardId == cellData.cardType);
+                tile.ResetCard(); 
+                if (tile.isExposed)
+                {
+                    tile.HideCard();
+                }
+                // tile.transform.SetSiblingIndex(cellData.position);
+            }
+            gameState = GameState.Idle;
+            CheckForGameOver();
+        }
+    }
 
     public void StartNewGame(int gridWidth, int gridHeight)
     {
@@ -135,9 +190,17 @@ public class GameManager : MonoBehaviour
         score = 0;
         turns = 0;
         gameState = GameState.Idle;
+        SaveGame();
+    }
+    public void LoadGame()
+    {
+        score = PlayerPrefs.GetInt("Score");
+        turns = PlayerPrefs.GetInt("Turns");
+        LoadGridData();
     }
     public void ExitToMainMenu()
     {
+        SaveGame();
         gridGenrator.ClearGrid();
         gameState = GameState.Idle;
     }
@@ -147,10 +210,18 @@ public class GameManager : MonoBehaviour
         if (gridGenrator.tiles.TrueForAll(t => t.isExposed))
         {
             gameState = GameState.GameOver;
+
             Debug.Log("Game Over");
         }
     }
 
+    [Serializable]
+    public class GridData
+    {
+        public int gridWidth;
+        public int gridHeight;
+        public List<CellData> cells = new List<CellData>();
+    }
 
     [Serializable]
     public class CellData
