@@ -9,7 +9,6 @@ public class SoundManager : MonoBehaviour
     public AudioClip cardMatchSound;
     public AudioClip cardMismatchSound;
     public AudioClip gameOverSound;
-    public AudioClip resetFlipSound;
     public int poolSize = 5;
     public AudioSource[] audioSources;
     private void Awake()
