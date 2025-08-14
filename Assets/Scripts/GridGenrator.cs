@@ -11,15 +11,8 @@ public class GridGenrator : MonoBehaviour
     public GridLayoutGroup cardGrid;
     public List<CardTile> tiles = new List<CardTile>();
     public List<int> positions = new List<int>();
-
-
-    void Start()
-    {
-        GenrateCardGrid();
-    }
     public void GenrateCardGrid()
     {
-
         cardGrid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         cardGrid.constraintCount = gridWidth;
         int totalCards = gridWidth * gridHeight;
@@ -73,7 +66,7 @@ public class GridGenrator : MonoBehaviour
     private void RescalGridCell()
     {
         float cellWidth = cardGrid.GetComponent<RectTransform>().rect.width / gridWidth - cardGrid.spacing.x;
-        Debug.LogError("cellWidth for grid : " + cardGrid.GetComponent<RectTransform>().rect.width / gridWidth + " / " + cardGrid.spacing.x);
+        Debug.LogError("cellWidth for grid : " + cardGrid.GetComponent<RectTransform>().rect.width/ gridWidth+ " / " + cardGrid.spacing.x);
         float cellHeight = cardGrid.GetComponent<RectTransform>().rect.height / gridHeight - cardGrid.spacing.y;
         // hight and width should be same what ever is less 
         if (cellWidth < cellHeight)

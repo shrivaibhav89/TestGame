@@ -21,8 +21,11 @@ public class GameManager : MonoBehaviour
     private int cardMatchScore = 5;
     public GameState gameState = GameState.Idle;
     public static GameManager instance;
+    public GameHudManager gameHudManager;
+    public MainMenuManager mainMenuManager;
     public List<CardMatchmaker> cardMatchmakers = new List<CardMatchmaker>();
     private CardMatchmaker currentCardMatchmaker;
+    public GameOver gameOver;
     public int streakMultiplier = 1;
 
 
@@ -85,10 +88,18 @@ public class GameManager : MonoBehaviour
             currentCardMatchmaker.secondCard = cardTile;
             CheckMatch(currentCardMatchmaker);
         }
+        gameHudManager.UpdateHudData();
     }
     private IEnumerator CheckMatchCards(CardMatchmaker cardMatchmaker)
     {
-        
+        if (cardMatchmaker.firstCard.cardType == cardMatchmaker.secondCard.cardType)
+        {
+            SoundManager.instance.PlaySound(SoundManager.instance.cardMatchSound);
+        }
+        else
+        {
+            SoundManager.instance.PlaySound(SoundManager.instance.cardMismatchSound);
+        }
         yield return new WaitForSeconds(1);
         if (cardMatchmaker.firstCard.cardType == cardMatchmaker.secondCard.cardType)
         {
@@ -108,6 +119,7 @@ public class GameManager : MonoBehaviour
         cardMatchmaker.secondCard = null;
         gameState = GameState.Idle;
         CheckForGameOver();
+        gameHudManager.UpdateHudData();
     }
     public void CheckMatch(CardMatchmaker cardMatchmaker)
     {
@@ -119,6 +131,7 @@ public class GameManager : MonoBehaviour
 
         score += matchScore * streakMultiplier;
         streakMultiplier++;
+        gameHudManager.UpdateHudData();
         SaveGame();
     }
 
@@ -189,6 +202,7 @@ public class GameManager : MonoBehaviour
         gridGenrator.GenrateCardGrid();
         score = 0;
         turns = 0;
+        gameHudManager.UpdateHudData();
         gameState = GameState.Idle;
         SaveGame();
     }
@@ -196,12 +210,14 @@ public class GameManager : MonoBehaviour
     {
         score = PlayerPrefs.GetInt("Score");
         turns = PlayerPrefs.GetInt("Turns");
+        gameHudManager.UpdateHudData();
         LoadGridData();
     }
     public void ExitToMainMenu()
     {
         SaveGame();
         gridGenrator.ClearGrid();
+        mainMenuManager.ShowMainMenu();
         gameState = GameState.Idle;
     }
 
@@ -210,6 +226,8 @@ public class GameManager : MonoBehaviour
         if (gridGenrator.tiles.TrueForAll(t => t.isExposed))
         {
             gameState = GameState.GameOver;
+            gameOver.ShowGameOverPanel();
+            SoundManager.instance.PlaySound(SoundManager.instance.gameOverSound);
 
             Debug.Log("Game Over");
         }
