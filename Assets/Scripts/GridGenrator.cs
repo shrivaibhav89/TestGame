@@ -66,7 +66,7 @@ public class GridGenrator : MonoBehaviour
     private void RescalGridCell()
     {
         float cellWidth = cardGrid.GetComponent<RectTransform>().rect.width / gridWidth - cardGrid.spacing.x;
-        Debug.LogError("cellWidth for grid : " + cardGrid.GetComponent<RectTransform>().rect.width/ gridWidth+ " / " + cardGrid.spacing.x);
+     //   Debug.LogError("cellWidth for grid : " + cardGrid.GetComponent<RectTransform>().rect.width/ gridWidth+ " / " + cardGrid.spacing.x);
         float cellHeight = cardGrid.GetComponent<RectTransform>().rect.height / gridHeight - cardGrid.spacing.y;
         // hight and width should be same what ever is less 
         if (cellWidth < cellHeight)
@@ -77,7 +77,7 @@ public class GridGenrator : MonoBehaviour
         {
             cellWidth = cellHeight;
         }
-        Debug.LogError(cellWidth + " / " + cellHeight);
+      //  Debug.LogError(cellWidth + " / " + cellHeight);
         cardGrid.cellSize = new Vector2(cellWidth, cellHeight);
     }
 

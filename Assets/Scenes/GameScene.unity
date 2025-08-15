@@ -6176,10 +6176,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardFlipSound: {fileID: 8300000, guid: 8783ad29c9b8b5a43aa60923f50abb25, type: 3}
-  cardMatchSound: {fileID: 8300000, guid: 449e41dfcd9e87b48a32be74daa43c95, type: 3}
-  cardMismatchSound: {fileID: 8300000, guid: 0d72a5c33fac5234f9a96e1dc1450838, type: 3}
+  cardMatchSound: {fileID: 8300000, guid: 1809bc07ba27f304caeda946a7d58670, type: 3}
+  cardMismatchSound: {fileID: 8300000, guid: dc7cd18b3d161d74e84df4d8aabcb64f, type: 3}
   gameOverSound: {fileID: 8300000, guid: e08875d4596e7654f9738c2502019c4d, type: 3}
-  resetFlipSound: {fileID: 8300000, guid: f67e8f7c02d6e404ab1692e1af386415, type: 3}
   poolSize: 5
   audioSources: []
 --- !u!4 &1852393752
